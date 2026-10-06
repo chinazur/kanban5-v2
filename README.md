@@ -22,6 +22,20 @@ A cyberpunk-styled revamp of the IT PMO Kanban board: a demo and training tool f
 - **Screens gallery** with light and dark captures, shown to match the current theme.
 - **Accessibility:** skip link, visible focus ring in both themes, labelled controls, inline errors linked to their fields, and `prefers-reduced-motion` respected.
 - **Responsive:** compact header and a single-column board on phones.
+- **IT Project Briefing popup** that appears after 10 seconds on the page.
+- **Floating WhatsApp chat widget** with suggested IT project questions.
+
+## Briefing popup and WhatsApp chat
+
+Ten seconds after the page loads, an **IT Project Briefing** notice appears (Wednesday 14 October 2026, 2:00 pm, Town Hall Meeting Room). Dismiss it with "Got it" or Esc.
+
+![The IT Project Briefing popup](assets/screens/briefing-popup.png)
+
+A green button at the bottom right opens an "Ask the IT PMO" dialog of suggested questions. Picking one opens WhatsApp (`wa.me/6590127258`) in a new tab with the message ready to send. It is a plain link: nothing is sent from the page and nothing is stored.
+
+![The WhatsApp chat dialog](assets/screens/whatsapp-dialog.png)
+
+To change the event, the number or the questions, edit the config object at the top of `js/briefing-popup.js` or `js/whatsapp-widget.js`. Notes are in `.claude/hooks/`.
 
 ## Features (unchanged from v1)
 
@@ -62,7 +76,9 @@ FormSubmit needs a one-time activation: the first submission to a new address se
 
 ```bash
 node --check js/app.js
-grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important' index.html css/styles.css js/app.js   # prints nothing
+node --check js/briefing-popup.js
+node --check js/whatsapp-widget.js
+grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm\(|!important' index.html css/styles.css js/app.js js/briefing-popup.js js/whatsapp-widget.js   # prints nothing
 ```
 
 ## Project structure
@@ -72,9 +88,12 @@ grep -nE 'localStorage|sessionStorage|indexedDB|document\.cookie|alert\(|confirm
 ├── index.html                 # Markup: header, hero, filters, board, gallery, modal
 ├── css/styles.css             # Theme tokens (light + dark) and all styles
 ├── js/app.js                  # Board logic (from v1) + theme toggle + hero video
+├── js/briefing-popup.js       # IT Project Briefing popup (shows after 10 s)
+├── js/whatsapp-widget.js      # Floating WhatsApp button and suggested-questions dialog
 ├── assets/
 │   ├── screens/               # Light and dark screenshots (Playwright)
 │   └── video/                 # Walkthrough recording and poster
+├── .claude/hooks/             # Notes on the popup and the WhatsApp widget
 ├── CLAUDE.md                  # Architecture notes and project rules
 └── .github/workflows/
     ├── ci.yml                 # Syntax, asset, external-resource and secret checks
