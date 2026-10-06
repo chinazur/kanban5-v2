@@ -1,0 +1,31 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+*.keystore
+credentials.json
+secrets.*
+.aws/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build output and dependencies (none today, kept as a guard)
+node_modules/
+dist/
+build/
+_site/
+*.log
+
+# Local tooling
+.playwright-mcp/
+.mcp.json
+.claude/settings.local.json

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Syntax and asset checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check JavaScript syntax
+        run: node --check js/app.js
+
+      - name: Check that referenced local assets exist
+        run: |
+          missing=0
+          for f in $(grep -ohE '(src|href|poster)="(css|js|assets)/[^"]+"' index.html | sed -E 's/^[a-z]+="//; s/"$//'); do
+            if [ ! -f "$f" ]; then echo "::error::index.html references missing file: $f"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Check for external resources
+        run: |
+          if grep -nE '<link[^>]+href="https?://|<script[^>]+src="https?://|url\(https?://' index.html css/styles.css; then
+            echo "::error::External resources found (CDNs, web fonts). v2 is self-contained."
+            exit 1
+          fi
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

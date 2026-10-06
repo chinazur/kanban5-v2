@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT PMO Kanban v2</title>
+<meta name="description" content="Cyberpunk-styled IT PMO Kanban board demo with light and dark themes. Fictitious data, runs in the browser.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070914'/%3E%3Cpath d='M7 8h5v16H7zM14 8h5v10h-5zM21 8h4v6h-4z' fill='%2300e5ff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#board">Skip to the board</a>
+
+<!-- =========================================================
+     Header: wordmark, live summary, theme toggle, Add Task
+     ========================================================= -->
+<header class="app-header">
+  <a class="wordmark" href="#top" aria-label="IT PMO Kanban v2">IT PMO <span class="sep">//</span> Kanban <span class="ver">v2</span></a>
+
+  <ul class="summary" id="summary" aria-label="Board summary"></ul>
+
+  <div class="header-actions">
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" aria-pressed="false">
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 14.5A9 9 0 0 1 9.5 3a9 9 0 1 0 11.5 11.5z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>
+    </button>
+    <button type="button" class="btn btn-primary" id="open-add-task"><span aria-hidden="true">+</span> Add Task</button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- =========================================================
+       Hero: headline, walkthrough video
+       ========================================================= -->
+  <section class="hero-wrap" aria-labelledby="hero-title">
+    <svg class="hero-skyline" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M0 300V210h40v-40h50v60h30V120h60v90h40v-70h70v40h30V90h60v110h50v-60h60v50h40V60h70v150h50v-80h60v70h40v-50h70v80h50V110h60v100h40v-40H1200V300z"/>
+      <g>
+        <rect class="win" x="100" y="150" width="8" height="8"/><rect class="win" x="140" y="132" width="8" height="8"/>
+        <rect class="win" x="190" y="170" width="8" height="8"/><rect class="win" x="250" y="150" width="8" height="8"/>
+        <rect class="win" x="330" y="110" width="8" height="8"/><rect class="win" x="350" y="140" width="8" height="8"/>
+        <rect class="win" x="410" y="160" width="8" height="8"/><rect class="win" x="480" y="90" width="8" height="8"/>
+        <rect class="win" x="520" y="130" width="8" height="8"/><rect class="win" x="580" y="170" width="8" height="8"/>
+        <rect class="win" x="640" y="100" width="8" height="8"/><rect class="win" x="700" y="150" width="8" height="8"/>
+        <rect class="win" x="760" y="120" width="8" height="8"/><rect class="win" x="820" y="170" width="8" height="8"/>
+        <rect class="win" x="900" y="140" width="8" height="8"/><rect class="win" x="960" y="160" width="8" height="8"/>
+        <rect class="win" x="1020" y="130" width="8" height="8"/><rect class="win" x="1090" y="150" width="8" height="8"/>
+      </g>
+    </svg>
+
+    <div class="hero">
+    <div class="hero-copy">
+      <h1 id="hero-title">Run the IT PMO from <span class="neon">one grid</span>.</h1>
+      <p>Four columns, eight demo tasks and nothing to install. Drag a card, filter by project or priority, and add a task of your own.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#board">Open the board</a>
+        <a class="btn btn-magenta" href="#screens">See the screens</a>
+      </div>
+    </div>
+
+    <div class="hero-media">
+      <figure class="video-frame">
+        <video id="hero-video" muted loop playsinline preload="metadata" poster="assets/video/walkthrough-poster.png" aria-label="Screen recording of the board: dragging a card between columns, switching theme and opening the Add Task form">
+          <source src="assets/video/walkthrough.webm" type="video/webm">
+          Your browser can't play this video. The screenshots below show the same flow.
+        </video>
+        <figcaption class="video-bar">
+          <span>Recorded from the live app</span>
+          <button type="button" id="video-toggle" aria-pressed="false">Pause</button>
+        </figcaption>
+      </figure>
+    </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       Board
+       ========================================================= -->
+  <div class="section-head">
+    <h2 id="board-heading">Board</h2>
+    <p>Demo data is held in memory only. Refreshing the page resets it.</p>
+  </div>
+
+  <section class="filters" aria-labelledby="filters-heading">
+    <form id="filter-form" role="search" onsubmit="return false;">
+      <h2 id="filters-heading" class="visually-hidden">Filter tasks</h2>
+      <div class="filter-field">
+        <label for="filter-project">Project</label>
+        <select id="filter-project" name="project"></select>
+      </div>
+      <div class="filter-field">
+        <label for="filter-assignee">Assignee contains</label>
+        <input id="filter-assignee" name="assignee" type="search" placeholder="e.g. Tan" autocomplete="off">
+      </div>
+      <div class="filter-field">
+        <label for="filter-priority">Priority</label>
+        <select id="filter-priority" name="priority"></select>
+      </div>
+      <button type="button" class="btn btn-ghost" id="clear-filters">Clear filters</button>
+      <p class="filter-status" id="filter-status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <div class="board" id="board" role="region" aria-labelledby="board-heading" tabindex="-1"></div>
+
+  <!-- =========================================================
+       Screens: light and dark captures taken with Playwright
+       ========================================================= -->
+  <div class="section-head" id="screens">
+    <h2>Screens</h2>
+    <p>Captured from the running app in both themes. The page shows the one that matches your current theme.</p>
+  </div>
+  <div class="gallery">
+    <figure class="shot">
+      <img class="for-light" src="assets/screens/board-light.png" width="1440" height="900" loading="lazy" alt="The board in the light theme with four columns of task cards and two overdue badges">
+      <img class="for-dark" src="assets/screens/board-dark.png" width="1440" height="900" loading="lazy" alt="The board in the dark theme with neon cyan and magenta accents">
+      <figcaption><strong>Board.</strong> Priority colours run down each card's edge. Overdue cards carry a badge.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img class="for-light" src="assets/screens/modal-light.png" width="1440" height="900" loading="lazy" alt="The Add Task dialog in the light theme with inline validation errors">
+      <img class="for-dark" src="assets/screens/modal-dark.png" width="1440" height="900" loading="lazy" alt="The Add Task dialog in the dark theme with inline validation errors">
+      <figcaption><strong>Add Task.</strong> Validation errors appear inline next to each field.</figcaption>
+    </figure>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>Fictitious demo for an internal IT PMO. Not affiliated with, endorsed by or meant to imitate any real bank or its systems.</p>
+  <p><a href="https://github.com/chinazur/kanban5-v2">Source on GitHub</a> · <a href="https://chinazur.github.io/kanban5/">v1 (original blue board)</a></p>
+</footer>
+
+<!-- =========================================================
+     Add Task modal
+     ========================================================= -->
+<div class="modal-backdrop" id="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Task</h2>
+      <button type="button" class="icon-btn" id="close-modal" aria-label="Close Add Task dialog">×</button>
+    </div>
+
+    <form class="task-form" id="task-form" novalidate>
+      <div class="field full">
+        <label for="f-title">Task Title <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-title" name="title" type="text" maxlength="80" required aria-describedby="f-title-error" autocomplete="off">
+        <p class="error" id="f-title-error"></p>
+      </div>
+
+      <div class="field full">
+        <label for="f-description">Description</label>
+        <textarea id="f-description" name="description" maxlength="500" aria-describedby="f-description-hint f-description-error"></textarea>
+        <p class="hint" id="f-description-hint">Optional · max 500 characters</p>
+        <p class="error" id="f-description-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-project">Project / Workstream <span class="req" aria-hidden="true">*</span></label>
+        <select id="f-project" name="project" required aria-describedby="f-project-error"></select>
+        <p class="error" id="f-project-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-category">Category <span class="req" aria-hidden="true">*</span></label>
+        <select id="f-category" name="category" required aria-describedby="f-category-error"></select>
+        <p class="error" id="f-category-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-assignee">Assignee <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-assignee" name="assignee" type="text" maxlength="60" required aria-describedby="f-assignee-error" autocomplete="off">
+        <p class="error" id="f-assignee-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-priority">Priority</label>
+        <select id="f-priority" name="priority" aria-describedby="f-priority-error"></select>
+        <p class="error" id="f-priority-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-dueDate">Due Date <span class="req" aria-hidden="true">*</span></label>
+        <input id="f-dueDate" name="dueDate" type="date" required aria-describedby="f-dueDate-error">
+        <p class="error" id="f-dueDate-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-status">Status</label>
+        <select id="f-status" name="status" aria-describedby="f-status-error"></select>
+        <p class="error" id="f-status-error"></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="cancel-modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="submit-task">Add Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast notifications (announced politely to screen readers) -->
+<div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+<!--
+  FormSubmit configuration
+  ------------------------
+  FORMSUBMIT_ENDPOINT (top of js/app.js) holds the email address that receives
+  new-task notifications. FormSubmit needs a ONE-TIME ACTIVATION: the first
+  submission to a new address sends a confirmation email, and nothing is
+  delivered until the link in that email is clicked.
+-->
+<script src="js/app.js"></script>
+</body>
+</html>
