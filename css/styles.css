@@ -562,7 +562,7 @@ svg.icon { width: 14px; height: 14px; flex: none; vertical-align: -2px; }
 /* ---------- WhatsApp chat widget ---------- */
 .wa-widget {
   position: fixed; right: var(--space-4); bottom: var(--space-4);
-  z-index: 65;
+  z-index: 75;
   display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-3);
 }
 .wa-toggle {
@@ -674,6 +674,10 @@ svg.icon { width: 14px; height: 14px; flex: none; vertical-align: -2px; }
   .summary li { min-width: 0; padding: 2px var(--space-2); }
   .summary .value { font-size: 16px; }
   .header-actions { margin-left: auto; }
+}
+@media (max-width: 767px) {
+  /* Keep the briefing popup clear of the WhatsApp button; the open chat dialog sits on top of it */
+  .briefing { bottom: calc(var(--space-4) + 72px); }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
