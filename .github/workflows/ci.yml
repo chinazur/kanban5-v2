@@ -20,6 +20,7 @@ jobs:
         run: |
           node --check js/app.js
           node --check js/briefing-popup.js
+          node --check js/whatsapp-widget.js
 
       - name: Check that referenced local assets exist
         run: |
