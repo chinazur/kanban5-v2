@@ -537,6 +537,28 @@ svg.icon { width: 14px; height: 14px; flex: none; vertical-align: -2px; }
 .toast-warning { --t: var(--warning); }
 .toast-info { --t: var(--info); }
 
+/* ---------- IT Project Briefing popup ---------- */
+.briefing {
+  position: fixed; left: var(--space-4); bottom: var(--space-4);
+  z-index: 70;
+  width: min(340px, calc(100vw - 32px));
+  border: 1px solid var(--magenta);
+  border-top-width: 4px;
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-lg), var(--glow);
+}
+.briefing-tag {
+  margin: 0; font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--magenta);
+}
+.briefing h2 { margin: var(--space-1) 0 var(--space-3); font-size: 20px; }
+.briefing dl { margin: 0 0 var(--space-4); display: grid; grid-template-columns: auto 1fr; gap: var(--space-1) var(--space-3); }
+.briefing dt { color: var(--muted); }
+.briefing dd { margin: 0; font-weight: 600; }
+
 /* ---------- Screens gallery ---------- */
 .gallery {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5);
